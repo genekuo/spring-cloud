@@ -1,0 +1,91 @@
+[] -> user specify or command results
+
+* Prepare source code and modify appspec.yml, buildspec.yml, 
+  scripts/start-app.sh, stop-app.sh and validate-app.sh based on source code
+
+* CodeCommit
+
+aws codecommit create-repository --repository-name [repository-name]
+
+for example: ipms-caf-logic
+
+git clone \
+  --config 'credential.helper=!aws codecommit --profile default --region ap-northeast-1 credential-helper $@' \
+  --config 'credential.UseHttpPath=true' [repository-name]
+
+  for example: https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/ipms-caf-logic
+
+* Move source code to the directory that git clone generated
+
+* Infrastructure (for python 3, modify the last line in java8-cf-template.py)
+
+python java8-cf-template.py > java8-cf.template
+
+aws cloudformation create-stack \
+	--capabilities CAPABILITY_IAM \
+	--stack-name ipms-caf-logic \
+	--template-body file://java8-cf.template \
+	--parameters ParameterKey=KeyPair,ParameterValue=caf-key
+
+	* User specify stack-name and ParameterValue
+
+* S3 (User specify Bucket name and must be unique)
+
+aws s3 mb s3://ipms-caf-logic-output-ap-northeast-1
+aws s3 mb s3://ipms-caf-logic-cache-ap-northeast-1
+
+* CodeBuild
+
+(If the Role not existed in IAM, then run this)
+aws iam create-role \
+	--role-name CodeBuildServiceRole \
+	--assume-role-policy-document file://create-codebuild-role.json
+
+(If the Policy not existed in IAM, then run this) 
+aws iam put-role-policy \
+	--role-name CodeBuildServiceRole \
+	--policy-name CodeBuildServiceRolePolicy \
+	--policy-document file://put-codebuild-role-policy.json
+
+
+aws codebuild create-project --name ipms-caf-logic --description "ipms-caf-logic" --source type="CODECOMMIT",location="https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/ipms-caf-logic" --artifacts type="S3",location="ipms-caf-logic-output-ap-northeast-1",name="ipms-caf-logic.zip",packaging="ZIP" --environment type="LINUX_CONTAINER",computeType="BUILD_GENERAL1_SMALL",image="aws/codebuild/java:openjdk-8" --service-role [CodeBuildServiceRole arn] 
+
+for example: "arn:aws:iam::574123185827:role/CodeBuildServiceRole"
+
+aws codebuild update-project --name ipms-caf-logic --description "ipms-caf-logic" --source type="CODECOMMIT",location="https://git-codecommit.ap-northeast-1.amazonaws.com/v1/repos/ipms-caf-logic" --artifacts type="S3",location="ipms-caf-logic-output-ap-northeast-1",name="ipms-caf-logic.zip",packaging="ZIP" --cache type="S3",location="ipms-caf-logic-cache-ap-northeast-1" --environment type="LINUX_CONTAINER",computeType="BUILD_GENERAL1_SMALL",image="aws/codebuild/java:openjdk-8" --service-role [CodeBuildServiceRole arn]
+
+for example: "arn:aws:iam::574123185827:role/CodeBuildServiceRole"
+
+aws codebuild start-build --project-name ipms-caf-logic
+
+* CodeDeploy
+
+(If the Role not existed in IAM, then run this) 
+aws iam create-role --role-name CodeDeployServiceRole --assume-role-policy-document file://CodeDeployDemo-Trust.json
+
+(If the Policy not existed in IAM, then run this) 
+aws iam attach-role-policy --role-name CodeDeployServiceRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
+
+aws deploy create-application --application-name ipms-caf-logic
+
+aws deploy create-deployment-group --application-name ipms-caf-logic --deployment-group-name staging --deployment-config-name CodeDeployDefault.OneAtATime --ec2-tag-filters Key=aws:cloudformation:stack-name,Type=KEY_AND_VALUE,Value=ipms-caf-logic --service-role-arn arn:aws:iam::574123185827:role/CodeDeployServiceRole
+
+aws deploy create-deployment --application-name ipms-caf-logic --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name staging --s3-location bucket=ipms-caf-logic-output-ap-northeast-1,bundleType=zip,key=ipms-caf-logic.zip
+
+* CodePipeline
+
+(If the Role not existed in IAM, then run this) 
+aws iam create-role \
+	--role-name CodePipelineServiceRole \
+	--assume-role-policy-document file://create-codepipeline-role.json
+
+(If the Policy not existed in IAM, then run this) 
+aws iam put-role-policy \
+	--role-name CodePipelineServiceRole \
+	--policy-name CodePipelineServiceRolePolicy \
+	--policy-document file://put-codepipeline-role-policy.json
+
+* Edit pipeline.json based on previous command and results, then run the following
+aws codepipeline create-pipeline --cli-input-json file://pipeline.json
+
+aws codepipeline get-pipeline-state --name ipms-caf-logic

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/1-api" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/1-api" />
+            <option value="$PROJECT_DIR$/1-api/api" />
+            <option value="$PROJECT_DIR$/1-api/microservices" />
+            <option value="$PROJECT_DIR$/1-api/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/1-api/microservices/product-service" />
+            <option value="$PROJECT_DIR$/1-api/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/1-api/microservices/review-service" />
+            <option value="$PROJECT_DIR$/1-api/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/2-persistence" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/2-persistence" />
+            <option value="$PROJECT_DIR$/2-persistence/api" />
+            <option value="$PROJECT_DIR$/2-persistence/microservices" />
+            <option value="$PROJECT_DIR$/2-persistence/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/2-persistence/microservices/product-service" />
+            <option value="$PROJECT_DIR$/2-persistence/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/2-persistence/microservices/review-service" />
+            <option value="$PROJECT_DIR$/2-persistence/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/3-reactive" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/3-reactive" />
+            <option value="$PROJECT_DIR$/3-reactive/api" />
+            <option value="$PROJECT_DIR$/3-reactive/microservices" />
+            <option value="$PROJECT_DIR$/3-reactive/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/3-reactive/microservices/product-service" />
+            <option value="$PROJECT_DIR$/3-reactive/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/3-reactive/microservices/review-service" />
+            <option value="$PROJECT_DIR$/3-reactive/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/4-discovery" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/4-discovery" />
+            <option value="$PROJECT_DIR$/4-discovery/api" />
+            <option value="$PROJECT_DIR$/4-discovery/microservices" />
+            <option value="$PROJECT_DIR$/4-discovery/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/4-discovery/microservices/product-service" />
+            <option value="$PROJECT_DIR$/4-discovery/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/4-discovery/microservices/review-service" />
+            <option value="$PROJECT_DIR$/4-discovery/spring-cloud" />
+            <option value="$PROJECT_DIR$/4-discovery/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/4-discovery/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/5-gateway" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/5-gateway" />
+            <option value="$PROJECT_DIR$/5-gateway/api" />
+            <option value="$PROJECT_DIR$/5-gateway/microservices" />
+            <option value="$PROJECT_DIR$/5-gateway/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/5-gateway/microservices/product-service" />
+            <option value="$PROJECT_DIR$/5-gateway/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/5-gateway/microservices/review-service" />
+            <option value="$PROJECT_DIR$/5-gateway/spring-cloud" />
+            <option value="$PROJECT_DIR$/5-gateway/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/5-gateway/spring-cloud/gateway" />
+            <option value="$PROJECT_DIR$/5-gateway/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/6-security" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/6-security" />
+            <option value="$PROJECT_DIR$/6-security/api" />
+            <option value="$PROJECT_DIR$/6-security/microservices" />
+            <option value="$PROJECT_DIR$/6-security/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/6-security/microservices/product-service" />
+            <option value="$PROJECT_DIR$/6-security/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/6-security/microservices/review-service" />
+            <option value="$PROJECT_DIR$/6-security/spring-cloud" />
+            <option value="$PROJECT_DIR$/6-security/spring-cloud/authorization-server" />
+            <option value="$PROJECT_DIR$/6-security/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/6-security/spring-cloud/gateway" />
+            <option value="$PROJECT_DIR$/6-security/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/7-config" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/7-config" />
+            <option value="$PROJECT_DIR$/7-config/api" />
+            <option value="$PROJECT_DIR$/7-config/microservices" />
+            <option value="$PROJECT_DIR$/7-config/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/7-config/microservices/product-service" />
+            <option value="$PROJECT_DIR$/7-config/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/7-config/microservices/review-service" />
+            <option value="$PROJECT_DIR$/7-config/spring-cloud" />
+            <option value="$PROJECT_DIR$/7-config/spring-cloud/authorization-server" />
+            <option value="$PROJECT_DIR$/7-config/spring-cloud/config-server" />
+            <option value="$PROJECT_DIR$/7-config/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/7-config/spring-cloud/gateway" />
+            <option value="$PROJECT_DIR$/7-config/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/8-resilience" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/8-resilience" />
+            <option value="$PROJECT_DIR$/8-resilience/api" />
+            <option value="$PROJECT_DIR$/8-resilience/microservices" />
+            <option value="$PROJECT_DIR$/8-resilience/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/8-resilience/microservices/product-service" />
+            <option value="$PROJECT_DIR$/8-resilience/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/8-resilience/microservices/review-service" />
+            <option value="$PROJECT_DIR$/8-resilience/spring-cloud" />
+            <option value="$PROJECT_DIR$/8-resilience/spring-cloud/authorization-server" />
+            <option value="$PROJECT_DIR$/8-resilience/spring-cloud/config-server" />
+            <option value="$PROJECT_DIR$/8-resilience/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/8-resilience/spring-cloud/gateway" />
+            <option value="$PROJECT_DIR$/8-resilience/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/9-trace2" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/9-trace2" />
+            <option value="$PROJECT_DIR$/9-trace2/api" />
+            <option value="$PROJECT_DIR$/9-trace2/microservices" />
+            <option value="$PROJECT_DIR$/9-trace2/microservices/product-composite-service" />
+            <option value="$PROJECT_DIR$/9-trace2/microservices/product-service" />
+            <option value="$PROJECT_DIR$/9-trace2/microservices/recommendation-service" />
+            <option value="$PROJECT_DIR$/9-trace2/microservices/review-service" />
+            <option value="$PROJECT_DIR$/9-trace2/spring-cloud" />
+            <option value="$PROJECT_DIR$/9-trace2/spring-cloud/authorization-server" />
+            <option value="$PROJECT_DIR$/9-trace2/spring-cloud/config-server" />
+            <option value="$PROJECT_DIR$/9-trace2/spring-cloud/eureka-server" />
+            <option value="$PROJECT_DIR$/9-trace2/spring-cloud/gateway" />
+            <option value="$PROJECT_DIR$/9-trace2/util" />
+          </set>
+        </option>
+        <option name="useQualifiedModuleNames" value="true" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

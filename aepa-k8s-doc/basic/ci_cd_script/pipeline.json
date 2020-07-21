@@ -1,0 +1,91 @@
+{
+    "pipeline": {
+        "roleArn": "arn:aws:iam::574123185827:role/CodePipelineServiceRole",
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "inputArtifacts": [],
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "version": "1",
+                            "provider": "CodeCommit"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ],
+                        "configuration": {
+                            "BranchName": "master",
+                            "RepositoryName": "ipms-caf-logic"
+                        },
+                        "runOrder": 1
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "MyApp"
+                            }
+                        ],
+                        "name": "CodeBuild",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "version": "1",
+                            "provider": "CodeBuild"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ],
+                        "configuration": {
+                            "ProjectName": "ipms-caf-logic"
+                        },
+                        "runOrder": 1
+                    }
+                ]
+            },
+            {
+                "name": "Staging",
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "MyAppBuild"
+                            }
+                        ],
+                        "name": "staging",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "version": "1",
+                            "provider": "CodeDeploy"
+                        },
+                        "outputArtifacts": [],
+                        "configuration": {
+                            "ApplicationName": "ipms-caf-logic",
+                            "DeploymentGroupName": "staging"
+                        },
+                        "runOrder": 1
+                    }
+                ]
+            }
+        ],
+        "artifactStore": {
+            "type": "S3",
+            "location": "ipms-caf-logic-output-ap-northeast-1"
+        },
+        "name": "ipms-caf-logic",
+        "version": 1
+    }
+}

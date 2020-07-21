@@ -3,7 +3,7 @@ server.port: 7001
 logging:
   level:
     root: INFO
-    demo.mciroservices: DEBUG
+    demo.microservices: DEBUG
 
 ---
 spring.profiles: docker

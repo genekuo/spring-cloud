@@ -1,0 +1,26 @@
+## Persistence
+./gradlew :microservices:product-service:test --tests PersistenceTests
+
+docker-compose exec mongodb mongo --quiet
+docker-compose exec mysql mysql -uuser -p review-db
+exit
+
+./gradlew build && docker-compose build && docker-compose up -d
+http://localhost:8080/swagger-ui/
+enter productId: 123456
+
+docker-compose exec mongodb mongo product-db --quiet --eval "db.products.find()"
+docker-compose exec mongodb mongo recommendation-db --quiet --eval "db.recommendations.find()"
+docker-compose exec mysql mysql -uuser -p review-db -e "select * from reviews"
+
+password: pwd
+
+CRTL+C
+docker-compose down
+
+./test-all.sh start stop
+
+[clean up]
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -a -q)

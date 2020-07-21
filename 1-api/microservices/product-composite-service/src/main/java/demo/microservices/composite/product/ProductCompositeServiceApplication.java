@@ -17,7 +17,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
-@EnableSwagger2WebFlux
+//@EnableSwagger2WebFlux
 @SpringBootApplication
 @ComponentScan("demo.microservices")
 public class ProductCompositeServiceApplication {

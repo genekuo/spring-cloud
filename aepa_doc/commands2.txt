@@ -1,0 +1,57 @@
+## Docker
+docker run -it --rm ubuntu
+cat /etc/os-release | grep 'VERSION='
+docker run -it --rm centos
+cat /etc/redhat-release
+docker rm -f $(docker ps -aq)
+
+echo 'Runtime.getRuntime().availableProcessors()' | jshell -q
+java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+java -Xmx200m -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i openjdk:12.0.2 jshell -q
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpus 3 openjdk:12.0.2 jshell -q
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpu-shares 2048 openjdk:12.0.2 jshell -q
+
+docker run -it --rm openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+docker run -it --rm -m=1024M openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+docker run -it --rm -m=1024M openjdk:12.0.2 java -Xmx800m -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+
+echo 'new byte[100_000_000]' | docker run -i --rm -m=1024M openjdk:12.0.2 jshell -q
+echo 'new byte[500_000_000]' | docker run -i --rm -m=1024M openjdk:12.0.2 jshell -q
+
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpus 3 openjdk:9-jdk jshell -q
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpu-shares 2048 openjdk:9-jdk jshell -q
+docker run -it --rm -m=1024M openjdk:9-jdk java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+echo 'new byte[100_000_000]' | docker run -i --rm -m=1024M openjdk:9-jdk jshell -q
+echo 'new byte[500_000_000]' | docker run -i --rm -m=1024M openjdk:9-jdk jshell -q
+
+./gradlew :product-service:build
+docker build -t product-service .
+docker images | grep product-service
+docker run --rm -p8080:8080 -e "SPRING_PROFILE_ACTIVE=docker" product-service
+curl localhost:8080/product/3
+docker ps
+
+docker run -d -p8080:8080 -e "SPRING_PROFILE_ACTIVE=docker" --name my-prd-srv product-service
+docker logs my-prd-srv -f
+docker rm -f my-prd-srv
+
+./gradlew build
+docker-compose build
+docker images | grep aepa
+docker-compose up -d
+docker-compose logs -f
+curl localhost:8080/product-composite/123 -s | jq .
+docker-compose down
+
+./test-all.sh start stop
+
+docker-compose ps
+docker-compose logs product
+docker system prune -f --volumes
+docker-compose up -d --scale product=0
+docker-compose up -d --scale product=1
+./test-all.sh
+
+./gradlew clean build && docker-compose build && ./test-all.sh start stop

@@ -1,0 +1,15 @@
+./gradlew build && docker-compose build
+./test-all.sh start
+
+curl https://dev-usr:dev-pwd@localhost:8443/config/product/docker -ks | jq .
+
+curl -k https://dev-usr:dev-pwd@localhost:8443/config/encrypt --data-urlencode "hello world"
+
+curl -k https://dev-usr:dev-pwd@localhost:8443/config/decrypt -d 6ef3b3d48eeea69c780e23bac54d70e2a032640371269159559f8008607eee30
+
+docker-compose down
+
+[clean up]
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -a -q)

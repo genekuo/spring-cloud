@@ -1,0 +1,174 @@
+(option) Externalize certificate
+keytool -genkeypair -alias localhost -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore edge-test.p12 -validity 3650
+enter: password
+enter: testtest
+
+[restart if the edge server is running]
+docker-compose up -d --scale gateway=0
+docker-compose up -d --scale gateway=1
+[restart if the edge server is running]
+(option) Externalize certificate
+---------------------------------------------------
+
+./gradlew build && docker-compose build
+./test-all.sh start
+
+[Test Eureka server]
+curl -H "accept:application/json" https://u:p@localhost:8443/eureka/api/apps -ks | jq -r '.applications.application[].instance[].instanceId'
+https://localhost:8443/eureka/web
+user/password: u/p
+
+[Access token with password grant flow]
+ACCESS_TOKEN=$(curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+
+[for writer client]
+curl -k https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .
+[for reader client]
+curl -k https://reader:secret@localhost:8443/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .
+
+[Implicit grant flow]
+[Reader client]
+https://localhost:8443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=http://my.redirect.uri&scope=product:read&state=48532
+[Writer client]
+https://localhost:8443/oauth/authorize?response_type=token&client_id=writer&redirect_uri=http://my.redirect.uri&scope=product:read+product:write&state=95372
+enter: magnus/password
+
+copy the url and yield:
+http://my.redirect.uri/#access_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxODEzODkxNTUsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJkMWY3NThiNy1jMGI2LTQ3ODctYTgwNC02MTkxZDA2NzJjNDMiLCJjbGllbnRfaWQiOiJyZWFkZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXX0.YiUqqwYm9hjWiG18wHJjaX2tMJJaaQ2Uux6R-5E0CWw2jFj2IRHsBkRm4Ie-2dMvg6Blyy42sTlV3u1G6_3DikkJeN3D5ShicKeKzhpL41fHzQSvgHMOhHKnvyvlXv34OsdwXttfW6UaqhEh_fHnAABHCIMN4nk4btf3GZbDfFBxdwzXVxbm_1I76jbrThO28SoSrAr44u3wkJGXSxyUmoFGl8QjlHK-SQv9FV0uuxUUBypNEzdaFGWRoLWKHhGAoxamO-KCS9srYPYsQlDHKsc1nh2N_A2Ivb7ponDOtf1-ZP8bruVpt932TgFhyJWu5K7wkS0o_K-fBWr8eH74vA&token_type=bearer&state=48532&expires_in=599999999&jti=d1f758b7-c0b6-4787-a804-6191d0672c43
+
+get access token and save
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxODEzODkxNTUsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJkMWY3NThiNy1jMGI2LTQ3ODctYTgwNC02MTkxZDA2NzJjNDMiLCJjbGllbnRfaWQiOiJyZWFkZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXX0.YiUqqwYm9hjWiG18wHJjaX2tMJJaaQ2Uux6R-5E0CWw2jFj2IRHsBkRm4Ie-2dMvg6Blyy42sTlV3u1G6_3DikkJeN3D5ShicKeKzhpL41fHzQSvgHMOhHKnvyvlXv34OsdwXttfW6UaqhEh_fHnAABHCIMN4nk4btf3GZbDfFBxdwzXVxbm_1I76jbrThO28SoSrAr44u3wkJGXSxyUmoFGl8QjlHK-SQv9FV0uuxUUBypNEzdaFGWRoLWKHhGAoxamO-KCS9srYPYsQlDHKsc1nh2N_A2Ivb7ponDOtf1-ZP8bruVpt932TgFhyJWu5K7wkS0o_K-fBWr8eH74vA
+
+[Code grant flow]
+[Code for reader client]
+https://localhost:8443/oauth/authorize?response_type=code&client_id=reader&redirect_uri=http://my.redirect.uri&scope=product:read&state=35725
+
+get back the url:
+http://my.redirect.uri/?code=ic4nRh&state=35725
+CODE=ic4nRh
+
+[Backend to exchange code with access token]
+curl -k https://reader:secret@localhost:8443/oauth/token \
+-d grant_type=authorization_code \
+-d client_id=reader \
+-d redirect_uri=http://my.redirect.uri \
+-d code=$CODE -s | jq .
+
+save ACCESS_TOKEN
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxODEzODk2ODgsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJjMmVjMmRkNS1iYTZlLTRmZTItOWViMy05OWU4ZGNhNTM4MmEiLCJjbGllbnRfaWQiOiJyZWFkZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXX0.E6Ws2xeALkPz9zRlzi5Tno438fGxktB2-kxGb13Ny3JHh6lYVGKTdxqKga5XJQZEMNPOIedcDV8TjiLrLBEH-uDJKvhHf2D44I0YElHXmNIPE0jIG1givVkwBDjDvK8fyeZBtvb-7ewQkjYxs1Hhgwtr4_DsBLLcSY3zV4By3fyeVvuKBJm9yyUZ_2mznqsO0tlYeqrupKiuuwGbabXk58XuE1KyEQBIUElpPjtQ-LhFBZ1vtxSOkogYche01sdhTBe3lfC9OdhatZahQ0YiKT2pibLwX6yDBq5E0hHeJSAOBUrs0IsRZzETo6d3t3Hx9vdxnjhVgQBsDs6CXu9Xwg
+
+[reader]
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxOTQwMzUzMzIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJlNjQwODU4NC1mZDgzLTQ0NzUtOThjZS01MjY1NTMxMjlhYmYiLCJjbGllbnRfaWQiOiJyZWFkZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXX0.YMrGSH_1LAP7ZqbS0qnq1FvfVqReokgSrH1TYYnej3_vZY6MnS1ZuiLun-nd9JOHQOzyXOEAgx1mdLmYjOBtMvJMcGF-6nk4OXjVIFb-xzcoQPmQ1_cbM-7g5uiC6-0hHwkEXLSsT4o7OhogGBMlJrLsKGiDkLpK7WEYE-mESkoNDdVUZVQZyj4TIAsEp-m7tHTIu1-t0vK55m4h-p5q6B437BkFLSuTpgb-yQu98ocDDYK45GgQMLg1QISehSNUNIK4aACd7ou6-qERb22Lf7mnrRjtu19uYbUcUrtwoDUB8U_CEWrWP2ZwryuvbscXQOum2Qk6wRDqXdTgQ_hx-Q
+
+[Code for writer client]
+https://localhost:8443/oauth/authorize?response_type=code&client_id=writer&redirect_uri=http://my.redirect.uri&scope=product:read+product:write&state=72489
+Same procedures as reader to exchange code with access token
+http://my.redirect.uri/?code=HY83pm&state=72489
+CODE=HY83pm
+
+[Test with invalid token: 401]
+ACCESS_TOKEN=an-invalid-token
+
+curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN" -i
+
+[Test with reader token]
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxOTQwMzUzMzIsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiJlNjQwODU4NC1mZDgzLTQ0NzUtOThjZS01MjY1NTMxMjlhYmYiLCJjbGllbnRfaWQiOiJyZWFkZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiXX0.YMrGSH_1LAP7ZqbS0qnq1FvfVqReokgSrH1TYYnej3_vZY6MnS1ZuiLun-nd9JOHQOzyXOEAgx1mdLmYjOBtMvJMcGF-6nk4OXjVIFb-xzcoQPmQ1_cbM-7g5uiC6-0hHwkEXLSsT4o7OhogGBMlJrLsKGiDkLpK7WEYE-mESkoNDdVUZVQZyj4TIAsEp-m7tHTIu1-t0vK55m4h-p5q6B437BkFLSuTpgb-yQu98ocDDYK45GgQMLg1QISehSNUNIK4aACd7ou6-qERb22Lf7mnrRjtu19uYbUcUrtwoDUB8U_CEWrWP2ZwryuvbscXQOum2Qk6wRDqXdTgQ_hx-Q
+
+[to read: 200]
+curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN" -i
+
+[to update: 403]
+curl https://localhost:8443/product-composite/999 -k -H "Authorization: Bearer $ACCESS_TOKEN" -X DELETE -i
+
+[Test with writer token]
+[Code for writer client]
+https://localhost:8443/oauth/authorize?response_type=code&client_id=writer&redirect_uri=http://my.redirect.uri&scope=product:read+product:write&state=72489
+http://my.redirect.uri/?code=HY83pm&state=72489
+CODE=HY83pm
+
+curl -k https://writer:secret@localhost:8443/oauth/token \
+-d grant_type=authorization_code \
+-d client_id=writer \
+-d redirect_uri=http://my.redirect.uri \
+-d code=$CODE -s | jq .
+
+[writer]
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYWdudXMiLCJleHAiOjIxOTQwMzU2MDMsImF1dGhvcml0aWVzIjpbIlJPTEVfVVNFUiJdLCJqdGkiOiI0MjljZTk1Yi1mYzk1LTQwNDEtOTAzYi0yZjc1ZjFjNDdmZDkiLCJjbGllbnRfaWQiOiJ3cml0ZXIiLCJzY29wZSI6WyJwcm9kdWN0OnJlYWQiLCJwcm9kdWN0OndyaXRlIl19.AF8R_cvFw-8Pv-VPkkzeywU3qpocwxrR64OFXaiUbaJDTa_wA721pB5y3XLlVNkUUPqQBNlahcBEB-lyXyyMmA9fu5cws6282skg5mXiGoJpGdtG34NzTFAvsTMTzYhuQpUjUuaGqv_Yo6cHXBmOQvkEacAlYudZu8J_SvDEoSKbPC7iijn8Z6t1Dp5o_uOIfrmJsgnFXinpkdKIN8wrdRlgRg71O2azMkAJSsCivh8kKBsOtaOXJ9JdTtpGWJPdOMmaQ00Mw8cEuvD2QrmIS8S0iZPPLHj2L0BT4vIOlxpEM8XecghgbfbdeVdL4fjhgzQDPRVICUjDZeiTKRN1fw
+
+curl https://localhost:8443/product-composite/999 -k -H "Authorization: Bearer $ACCESS_TOKEN" -X DELETE -i
+
+[View logAuthorizationInfo()]
+docker-compose logs -f product-composite
+
+docker-compose down
+
+[Test with OIDC: replace the authorization server with the OIDC provider]
+[auth0 setup]
+tenant domain: dev-vb7vi3nb.auth0.com
+Client ID: BXaLl0UmUl04p761JCKJ0bcEEm87oYMs
+Client Secret: AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4
+curl https://dev-vb7vi3nb.auth0.com/.well-known/openid-configuration -s | jq
+[auth0 setup]
+
+[Change auth0 config for product-composite and gateway]
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri
+change to
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://dev-vb7vi3nb.auth0.com/
+
+[rebuild while running]
+./gradlew build && docker-compose up -d --build product-composite gateway
+OR
+./gradlew build && docker-compose build
+
+./test-all.sh start
+
+docker-compose logs -f product-composite
+
+[Access token using password grant flow]
+curl --request POST \
+  --url 'https://dev-vb7vi3nb.auth0.com/oauth/token' \
+  --header 'content-type: application/json' \
+  --data '{"grant_type":"password", "username":"yuchiung10@yahoo.com.tw", "password":"Genekuo123", "audience":"https://localhost:8443/product-composite", "scope":"openid email product:read product:write", "client_id": "BXaLl0UmUl04p761JCKJ0bcEEm87oYMs", "client_secret": "AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4"}' -s | jq
+
+curl --request POST \
+  --url 'https://dev-vb7vi3nb.auth0.com/oauth/token' \
+  --header 'content-type: application/json' \
+  --data '{"grant_type":"password", "username":"yuchiung10@yahoo.com.tw", "password":"Genekuo123", "audience":"https://localhost:8443/product-composite", "scope":"openid email product:read", "client_id": "BXaLl0UmUl04p761JCKJ0bcEEm87oYMs", "client_secret": "AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4"}' -s | jq
+
+[Access token using implicit grant flow]
+https://dev-vb7vi3nb.auth0.com/authorize?response_type=token&scope=openid email product:read product:write&client_id=BXaLl0UmUl04p761JCKJ0bcEEm87oYMs&state=98421&&nonce=jxdlsjfi0fa&redirect_uri=http://my.redirect.uri&audience=https://localhost:8443/product-composite
+https://dev-vb7vi3nb.auth0.com/authorize?response_type=token&scope=openid email product:read&client_id=BXaLl0UmUl04p761JCKJ0bcEEm87oYMs&state=98421&&nonce=jxdlsjfi0fa&redirect_uri=http://my.redirect.uri&audience=https://localhost:8443/product-composite
+
+[Access token using authorization code grant flow]
+https://dev-vb7vi3nb.auth0.com/authorize?audience=https://localhost:8443/product-composite&scope=openid email product:read product:write&response_type=code&client_id=BXaLl0UmUl04p761JCKJ0bcEEm87oYMs&redirect_uri=http://my.redirect.uri&state=845361
+[Get]
+http://my.redirect.uri/?code=lP5bkDRaM9_YJf1u&state=845361
+CODE=lP5bkDRaM9_YJf1u
+
+curl --request POST \
+  --url 'https://dev-vb7vi3nb.auth0.com/oauth/token' \
+  --header 'content-type: application/json' \
+  --data '{"grant_type":"authorization_code", "client_id": "BXaLl0UmUl04p761JCKJ0bcEEm87oYMs", "client_secret": "AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4", "code": "lP5bkDRaM9_YJf1u", "redirect_uri": "http://my.redirect.uri"}' -s | jq
+
+ACCESS_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1qYzVOVEpGUVRBM056aERSa1E1UVRVelFUQTFRMEpDTnpBeFJqQkVNVUl6UmtVNFFqQTNSZyJ9.eyJpc3MiOiJodHRwczovL2Rldi12Yjd2aTNuYi5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWUwNDljODM2MDhjMWEwZTc3YjZiMzMyIiwiYXVkIjpbImh0dHBzOi8vbG9jYWxob3N0Ojg0NDMvcHJvZHVjdC1jb21wb3NpdGUiLCJodHRwczovL2Rldi12Yjd2aTNuYi5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNTk0MTIyOTc0LCJleHAiOjE1OTQyMDkzNzQsImF6cCI6IkJYYUxsMFVtVWwwNHA3NjFKQ0tKMGJjRUVtODdvWU1zIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZHVjdDpyZWFkIHByb2R1Y3Q6d3JpdGUifQ.dZYkxJpk4p8wVb-x4u1fkbjUjKEbJmsi9vvj7ug7rnq75aUWvskZRf5WlNrhCSzM616q8uv_C_aV7oXhtIDzW-C5_PRFLOfcBHZKpkSfxwlN6_3MtgQTGGRFECCWiCUfbUnyZInO43NbmxGieFza0MCOQ-cuyT0g3DZpoMRL25ev082YL2z8xv2Eaayh27WmZrTv4IyKEVyB-BcZX7zKH_gXfAzUTw4NMkJtPtGpvFb3B-8h74FrLJyvQHUgqJwJZcye-TlRtoTCUmOT7sdi6QsdP-xSS8gIWVDPG8bmeaGsqehIVDUF9R2QWHH0KdVOJFrysEu7rzrcUZaPeU13-Q
+[Test protected API]
+curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN" -i
+
+ACCESS_TOKEN=
+curl https://localhost:8443/product-composite/999 -k -H "Authorization: Bearer $ACCESS_TOKEN" -X DELETE -i
+
+curl -H "Authorization: Bearer $ACCESS_TOKEN" https://dev-vb7vi3nb.auth0.com/userinfo -s | jq
+
+docker-compose down
+
+note: for OpenID Connect,
+1. in product-composite-service and gateway, modify application.yml, then rebuild services:
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://dev-vb7vi3nb.auth0.com/
+2. in test-all.sh
+ACCESS_TOKEN=$(curl --request POST --url 'https://dev-vb7vi3nb.auth0.com/oauth/token' --header 'content-type: application/json' --data '{"grant_type":"password", "username":"yuchiung10@yahoo.com.tw", "password":"Genekuo123", "audience":"https://localhost:8443/product-composite", "scope":"openid email product:read product:write", "client_id": "BXaLl0UmUl04p761JCKJ0bcEEm87oYMs", "client_secret": "AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4"}' -s | jq -r .access_token)
+READER_ACCESS_TOKEN=$(curl --request POST --url 'https://dev-vb7vi3nb.auth0.com/oauth/token' --header 'content-type: application/json' --data '{"grant_type":"password", "username":"yuchiung10@yahoo.com.tw", "password":"Genekuo123", "audience":"https://localhost:8443/product-composite", "scope":"openid email product:read", "client_id": "BXaLl0UmUl04p761JCKJ0bcEEm87oYMs", "client_secret": "AjtUm6_r0cys0IJr6lb3mxAXQhbrvgjPyXqu3rZBW3EayKNHiWbWlXAkodtFngZ4"}' -s | jq -r .access_token)
+
+[clean up]
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker rmi $(docker images -a -q)

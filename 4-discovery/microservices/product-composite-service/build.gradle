@@ -36,9 +36,9 @@ dependencies {
 	implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
 	implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')
 	implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-	implementation('io.springfox:springfox-swagger2:3.0.0-SNAPSHOT')
-	implementation('io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT')
-	implementation('io.springfox:springfox-spring-webflux:3.0.0-SNAPSHOT')
+	implementation('io.springfox:springfox-swagger2:3.0.0-20200625.040154-68')
+	implementation('io.springfox:springfox-swagger-ui:3.0.0-20200625.034946-67')
+	implementation('io.springfox:springfox-spring-webflux:3.0.0-20200625.040152-60')
 
 	implementation('org.springframework.plugin:spring-plugin-core:2.0.0.RELEASE')
 

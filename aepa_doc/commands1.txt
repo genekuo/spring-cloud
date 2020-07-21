@@ -1,0 +1,77 @@
+## Cooperating Microservices
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew --version
+
+brew tap pivotal/tap && \
+brew cask install java && \
+brew install jq && \
+brew install springboot
+brew install kubectl
+brew cask install minikube
+brew cask install virtualbox
+brew link --overwrite kubernetes-cli
+
+git --version
+java --version
+curl --version
+jq --version
+spring --version
+docker version
+kubectl version --client --short
+minikube version
+vboxmanage --version
+
+create-projects.sh
+find product-service -type f
+
+cd product-composite-service; ./gradlew build; cd -; \
+cd product-service; ./gradlew build; cd -; \
+cd recommendation-service; ./gradlew build; cd -; \
+cd review-service; ./gradlew build; cd -;
+
+cat <<EOF > settings.gradle
+include ':product-service'
+include ':review-service'
+include ':recommendation-service'
+include 'product-composite-service'
+EOF
+
+cp -r product-service/gradle .
+cp product-service/gradlew .
+cp product-service/gradlew.bat .
+cp product-service/.gitignore .
+
+find product-service -depth -name "gradle" -exec rm -rfv "{}" \;
+find product-service -depth -name "gradlew*" -exec rm -fv "{}" \;
+
+find review-service -depth -name "gradle" -exec rm -rfv "{}" \;
+find review-service -depth -name "gradlew*" -exec rm -fv "{}" \;
+
+find recommendation-service -depth -name "gradle" -exec rm -rfv "{}" \;
+find recommendation-service -depth -name "gradlew*" -exec rm -fv "{}" \;
+
+find product-composite-service -depth -name "gradle" -exec rm -rfv "{}" \;
+find product-composite-service -depth -name "gradlew*" -exec rm -fv "{}" \;
+
+./gradlew build
+java -jar product-composite-service/build/libs/*.jar &
+java -jar product-service/build/libs/*.jar &
+java -jar recommendation-service/build/libs/*.jar &
+java -jar review-service/build/libs/*.jar &
+curl http://localhost:7000/product-composite/1
+curl http://localhost:7000/product-composite/1 -s | jq .
+curl http://localhost:7000/product-composite/13 -i
+curl http://localhost:7000/product-composite/113 -s | jq .
+curl http://localhost:7000/product-composite/213 -s | jq .
+curl http://localhost:7000/product-composite/-1 -i
+curl http://localhost:7000/product-composite/invalidProductId -i
+kill $(jobs -p)
+
+./gradlew build
+./gradlew test
+java -jar product-composite-service/build/libs/*.jar &
+java -jar product-service/build/libs/*.jar &
+java -jar recommendation-service/build/libs/*.jar &
+java -jar review-service/build/libs/*.jar &
+./test-all.sh
+kill $(jobs -p)

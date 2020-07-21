@@ -12,7 +12,7 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
+//import springfox.documentation.swagger2.annotations.EnableSwagger2WebFlux;
 
 import java.util.LinkedHashMap;
 
@@ -21,7 +21,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import static springfox.documentation.builders.RequestHandlerSelectors.basePackage;
 import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 
-@EnableSwagger2WebFlux
+//@EnableSwagger2WebFlux
 @SpringBootApplication
 @ComponentScan("demo.microservices")
 public class ProductCompositeServiceApplication {
