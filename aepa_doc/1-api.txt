@@ -1,9 +1,0 @@
-## API
-./gradlew build && docker-compose build && docker-compose up -d
-docker ps --format {{.Names}}
-./test-all.sh
-http://localhost:8080/swagger-ui/
-curl -X GET "http://localhost:8080/product-composite/123" -H "accept: application/json"
-
-[clean up]
-docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q) && docker rmi $(docker images -a -q)
